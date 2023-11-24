@@ -1,4 +1,4 @@
-print('\x1b[2J')
+a
 import time
 import hashlib
 
@@ -48,6 +48,7 @@ class Blockchain:
 
     def add_transaction(self, transaction):
         self.transactions[transaction.id] = transaction
+        return True
 
     def create_block(self):
         previous_hash = '0' if not self.blocks else self.blocks[-1].hash
@@ -55,6 +56,12 @@ class Blockchain:
         block.mine_block(self.difficulty)
         self.blocks.append(block)
         self.transactions = {}
+    
+    def get_transactions(self, id_searched):
+        for transaction_id in self.transactions:
+            if transaction_id == str(id_searched):
+                return self.transactions[transaction_id]
+        return None
 
     def save_blockchain(self, filename):
         with open(filename, 'w') as file:
@@ -85,16 +92,16 @@ def show_transactions():
         for transaction in recent_transactions:
             print(f"{transaction.id} == {transaction.sender} -> {transaction.recipient} : {transaction.amount} ")
             print("\n")
+
 def check_transactions():
-        print("Dernières transactions:")
-        recent_transactions = blockchain.get_recent_transactions()
-        for transaction in recent_transactions:
-            print(f"{transaction.id} == {transaction.sender} -> {transaction.recipient} : {transaction.amount} ")
-            print("\n")
+    id_searched = input("Entrez l'ID de la transaction que vous voulez regarder : ")
+    transaction = blockchain.get_transactions(id_searched)
+    if transaction is not None:
+        print(f"{transaction.id} == {transaction.sender} -> {transaction.recipient} : {transaction.amount} ")
+    else:
+        print("La transaction n'a pas été trouvée.")
 
-blockchain = Blockchain()
-
-while True:
+def classic_run() : 
     sender = input("Expéditeur: ")
     recipient = input("Destinataire: ")
     amount = float(input("Montant: "))
@@ -104,16 +111,22 @@ while True:
     if len(blockchain.blocks) > 0 and len(blockchain.blocks[-1].transactions) % longueur_block == 0:
         print("Effectuer la preuve de travail (Proof of Work) pour le bloc courant...")
         blockchain.create_block()
+    
+
+blockchain = Blockchain()
+
+while True:
+    
 
     choice = input("Que voulez-vous faire ? \n Ajouter une transaction -> a \n Regarder les 10 dernières transactions-> s \n Regarder une certaine transaction -> c \n Modifier la transaction -> t \n Votre choix :")
     if choice.lower() == "a" :
-        continue
-    elif choice.lower() == "c" : 
-        break
+        classic_run()
+    elif choice.lower() == "c" :
+        check_transactions()
     elif choice.lower() == "s" :
         show_transactions()
     elif choice.lower() == "t" :
-        break
+        check_transactions()
     else :
         break
 
