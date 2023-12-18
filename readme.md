@@ -2,6 +2,12 @@
 
 # Utilisation du programme
 
+0. Taper dans le PowerShell, à l'emplacement du fichier :
+
+- docker build -t tpblochain-app .
+
+- docker run -it tpblockchain-app
+
 1. Ajouter une Transaction
 
    Au démarrage du programme, vous serez invité à entrer les détails d'une transaction. Pour cela, suivez ces étapes :
