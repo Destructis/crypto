@@ -1,4 +1,3 @@
-a
 import time
 import hashlib
 
@@ -64,18 +63,21 @@ class Blockchain:
         return None
 
     def save_blockchain(self, filename):
+        line_count = 0
         with open(filename, 'w') as file:
-            file.write(f"Blockchain:\n")
             for block in self.blocks:
-                file.write(f"Nonce: {block.nonce}\n")
-                file.write("Transactions:\n")
                 for transaction_id in block.transactions:
                     transaction = block.transactions[transaction_id]
-                    file.write(f"Sender: {transaction.sender}\n")
-                    file.write(f"Recipient: {transaction.recipient}\n")
-                    file.write(f"Amount: {transaction.amount}\n")
-                    file.write(f"ID: {transaction.id}\n")
-                file.write("\n")
+                    line = f"Sender: {transaction.sender}, Recipient: {transaction.recipient}, Amount: {transaction.amount}, ID: {transaction.id}\n"
+                    file.write(line)
+                    line_count += 1
+                    if line_count == 10:
+                        file.close()
+                        line_count = 0
+                        filename = f"{filename.split('.')[0]}_{str(int(filename.split('.')[0].split('_')[-1]) + 1)}.txt"
+                        with open(filename, 'w') as file:
+                            pass
+
 
     def get_recent_transactions(self):
         recent_transactions = []
@@ -121,6 +123,8 @@ while True:
     choice = input("Que voulez-vous faire ? \n Ajouter une transaction -> a \n Regarder les 10 dernières transactions-> s \n Regarder une certaine transaction -> c \n Modifier la transaction -> t \n Votre choix :")
     if choice.lower() == "a" :
         classic_run()
+        for i in range(20):
+            blockchain.add_transaction(Transaction(f"Sender {i}", f"Recipient {i}", i))
     elif choice.lower() == "c" :
         check_transactions()
     elif choice.lower() == "s" :
